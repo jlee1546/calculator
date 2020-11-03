@@ -1,6 +1,6 @@
-/* This is the JavaScript for the Calculator project @The_Odin_Project*/
-let digit1, digit2, operator;
-// Functions that do the calculation for the calculator
+
+let displayValue = "", digit1 = "", flag = false, operator = "";
+//Functions for calculations
 
 function add(num1,num2) {
     return num1 + num2;
@@ -17,50 +17,132 @@ function multiply(num1,num2) {
 function divide(num1,num2) {
     return num1 / num2;
 }
-function allClear() {
-    const screenOutput = document.getElementById("to-screen");
-    screenOutput.value= "";
+
+function calculate(operator,num1,num2) {
+    if (operator === '+') {
+        return add(num1,num2);
+    } else if (operator === '-') {
+        return subtract(num1,num2);
+    } else if (operator === '*') {
+        return multiply(num1,num2);
+    } else if (operator === '/') {
+        return divide(num1,num2);
+    }
+    return num2;
 }
 
-// Function that calls a calculation function to operate on two numbers
-function operate(calculateFunc,num1,num2) {
-    return calculateFunc(num1,num2);
+function toScreen() {
+    const screen = document.querySelector('.screen');
+    screen.value = displayValue;
+    console.log(displayValue);
+   
 }
-// Function that writes to the input field producting screen output
-function toScreen(value) {
+
+function writeDigit(number) {
+    if (flag === true) {
+        displayValue = number;
+        flag = false;
+    } else {
+        displayValue = displayValue === '0' ? number : displayValue + number;
+    }
     
-    const screenOutput = document.getElementById("to-screen");
-    screenOutput.value += value;
+    console.log(displayValue, digit1, flag, operator);
 }
-//  Adds event listener to digit buttons
-const digit = document.querySelectorAll('.digit').forEach(item => {
-    item.addEventListener('click', event => {
-        toScreen(item.value);
-        if (digit2 === undefined) {
-            digit1 += item.value;
-        } else {
-            digit2 += item.value;
-        }
-        console.log(digit1);
-        console.log(digit2);
-        
+
+function acceptOperator(nextOperator) {
+    const inputValue = parseFloat(displayValue);
+
+    if (digit1 === undefined && !isNaN(inputValue)) {
+        digit1 = inputValue;
+    } else if (operator) {
+        const result = calculate(operator,digit1,inputValue);
+
+        displayValue = String(result);
+        digit1 = result;
+    }
+    flag = true;
+    operator = nextOperator;
+    console.log(displayValue, digit1, flag, operator);
+}
+
+
+// Adds event listener to digit button
+
+const digits = document.querySelectorAll('.digit');
+digits.forEach(digit => {
+    digit.addEventListener('click', event => {
+        writeDigit(digit.value);
+        toScreen();
     });
 });
 
-// Adds event listener to all-clear
+// Adds event listener to decimal button
+
+const decimal = document.querySelector('.decimal');
+decimal.addEventListener('click', function() {
+    if (displayValue.includes('.')) {
+        return;
+    } else {
+        displayValue += '.';
+        toScreen();
+    }
+});
+
+// Add event listener to AC button
+
 const clear = document.querySelector('.all-clear');
 clear.addEventListener('click', function() {
-    allClear();
-    digit1 = "";
-    digit2 = "";
+    digit1 = '';
+    flag = '';
+    operator = '';
+    displayValue = '0';
+    toScreen();
+    
 });
 
-// Adds eventlistener to = button
+// Add event listener to + button
 
-const equals = document.querySelector('.operation');
-equals.addEventListener('click', function() {
-    operate(operation,num1,num2)
+const plus = document.querySelector('.plus');
+plus.addEventListener('click', function() {
+    acceptOperator(plus.value);
+    toScreen();
+  
+    
 });
 
-// Adds event listner to operator buttons
-//const opertator = document.querySelector('')
+// Add event listener to - button
+
+const minus = document.querySelector('.minus');
+minus.addEventListener('click', function() {
+    acceptOperator(minus.value);
+    toScreen();
+});
+
+// Add event listener to x button
+
+const times = document.querySelector('.times');
+times.addEventListener('click', function() {
+    acceptOperator(times.value);
+    toScreen();
+});
+
+// Add event listener to divide button
+
+const divis = document.querySelector('.divide');
+divis.addEventListener('click', function() {
+    acceptOperator(divis.value);
+    toScreen();
+});
+
+// Add event listener to = button
+
+const equal = document.querySelector('.equal');
+equal.addEventListener('click', function() {
+    acceptOperator(equal.value);
+    toScreen();
+})
+
+
+
+
+
